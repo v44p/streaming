@@ -3,6 +3,7 @@ services:
   zoo1:
     image: zookeeper:3.4.9
     hostname: zoo1
+    container_name: zoo1
     ports:
       - "2181:2181"
     environment:
@@ -12,9 +13,12 @@ services:
     volumes:
       - ./zk-single-kafka-multiple/zoo1/data:/data
       - ./zk-single-kafka-multiple/zoo1/datalog:/datalog 
+    networks:
+      - kafka
   kafka1:
     image: confluentinc/cp-kafka:5.4.0
     hostname: kafka1
+    container_name: kafka1
     ports:
       - "9092:9092"
     environment:
@@ -28,9 +32,12 @@ services:
       - ./zk-single-kafka-multiple/kafka1/data:/var/lib/kafka/data
     depends_on:
       - zoo1 
+    networks:
+      - kafka
   kafka2:
     image: confluentinc/cp-kafka:5.4.0
     hostname: kafka2
+    container_name: kafka2
     ports:
       - "9093:9093"
     environment:
@@ -44,9 +51,12 @@ services:
       - ./zk-single-kafka-multiple/kafka2/data:/var/lib/kafka/data
     depends_on:
       - zoo1
+    networks:
+      - kafka
   kafka3:
     image: confluentinc/cp-kafka:5.4.0
     hostname: kafka3
+    container_name: kafka3
     ports:
       - "9094:9094"
     environment:
@@ -60,16 +70,24 @@ services:
       - ./zk-single-kafka-multiple/kafka3/data:/var/lib/kafka/data
     depends_on:
       - zoo1
+    networks:
+      - kafka
   producer:
     build:
       context: ./api-producer
       dockerfile: Dockerfile
     container_name: producer
+    networks:
+      - kafka
     # ports: 
     #   - "9092:9092"
     #   - "9093:9093"
     #   - "9094:9094"
     depends_on:
       - kafka1
+
+networks:
+  kafka:
+
 
     
